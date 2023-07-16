@@ -277,8 +277,8 @@ class Webdriver:
             lines = extracted_content.split('\n')
             lines = lines[1:len(lines) - 1]
             script = '\n'.join(line[8:] if len(line) >= 8 else line for line in lines)
-        try:
             script = script.replace('\"params_text_here\"', json.dumps(params)[1:-1])
+        try:
             exec(script)
         except Exception as e:
             self.logger.error("run_script 發生異常停止運行腳本")

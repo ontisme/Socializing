@@ -970,3 +970,9 @@ KeyError: 15
 2023-07-16 09:40:51 - server - "C:\Users\User\PycharmProjects\Socializing\main.py:29" - <module> - INFO - 正在啟動伺服器...
 2023-07-16 09:40:51 - server - "C:\Users\User\PycharmProjects\Socializing\main.py:30" - <module> - INFO - Document：http://127.0.0.1:34567/docs
 
+2023-07-16 23:35:52 - server - "C:\Users\User\Projects\Socializing\backend\main.py:29" - <module> - INFO - 正在啟動伺服器...
+2023-07-16 23:35:52 - server - "C:\Users\User\Projects\Socializing\backend\main.py:30" - <module> - INFO - Document：http://127.0.0.1:34567/docs
+
+2023-07-17 00:38:51 - server - "C:\Users\User\Projects\Socializing\backend\main.py:29" - <module> - INFO - 正在啟動伺服器...
+2023-07-17 00:38:51 - server - "C:\Users\User\Projects\Socializing\backend\main.py:30" - <module> - INFO - Document：http://127.0.0.1:34567/docs
+

@@ -27,6 +27,7 @@ const editForm = ref<any>({
 })
 const multipleTableRef = ref()
 const multipleSelection = ref([])
+const isOpen = ref(false)
 const toggleCardCollapse = () => {
   cardCollapse.value = !cardCollapse.value
 }
@@ -72,6 +73,11 @@ const handleAddTask = async (data: any, action: string) => {
       idle_time: 30
     }
   })
+
+  // 留言後刪除el-input的內容
+  if (action === "comment") {
+    data.comment = ""
+  }
 }
 
 const handleDeleteProfile = async (data: any) => {
@@ -246,10 +252,10 @@ defineOptions({
 
 <template>
   <div class="app-container">
-    <el-scrollbar height="500px">
+    <el-scrollbar min-height="500px">
       <el-card v-loading="loading" shadow="never">
         <div class="table-wrapper">
-          <el-button type="primary" @click="getTableData">手動更新列表</el-button>
+          <el-button type="primary" @click="getTableData">更新列表</el-button>
           <el-button type="primary" @click="handleBatchUpdateProfile">批次建檔</el-button>
           <el-table
             ref="multipleTableRef"
@@ -262,28 +268,42 @@ defineOptions({
             <el-table-column prop="index" label="序列" width="60" align="center" />
             <!--          <el-table-column prop="profile.name" label="配置名稱" width="100" align="center" />-->
             <el-table-column prop="facebook.name" label="臉書名稱" width="100" align="center" />
-            <el-table-column prop="facebook.img" label="照片" width="100" align="center">
-              <template #default="scope">
-                <el-image
-                  fit="cover"
-                  :preview-src-list="[`data:image/png;base64,${scope.row.facebook.img}`]"
-                  :src="`data:image/png;base64,${scope.row.facebook.img}`"
-                  alt=""
-                />
-              </template>
-            </el-table-column>
             <el-table-column prop="comment" label="留言內容" align="center">
               <template #default="scope">
-                <el-input v-model="scope.row.comment" />
+                <el-row>
+                  <el-col>
+                    <el-input v-model="scope.row.comment" placeholder="留言......">
+                      <template #prepend>
+                        <el-avatar :src="`data:image/png;base64,${scope.row.facebook.img}`" :size="25" fit="cover" />
+                      </template>
+                      <template #append>
+                        <el-row :gutter="50">
+                          <el-col :span="8">
+                            <el-button type="primary" size="small" @click="handleAddTask(scope.row, 'comment')"
+                              >留言</el-button
+                            >
+                          </el-col>
+                          <el-col :span="8">
+                            <el-button type="primary" size="small" @click="handleAddTask(scope.row, 'like')"
+                              >讚</el-button
+                            >
+                          </el-col>
+                          <el-col :span="8">
+                            <el-button type="primary" size="small" @click="handleAddTask(scope.row, 'share')"
+                              >分享</el-button
+                            >
+                          </el-col>
+                        </el-row>
+                      </template>
+                    </el-input>
+                  </el-col>
+                </el-row>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" label="操作" width="250" align="center">
-              <template #default="scope">
-                <el-button type="primary" size="small" @click="handleAddTask(scope.row, 'comment')">留言</el-button>
-                <el-button type="primary" size="small" @click="handleAddTask(scope.row, 'like')">讚</el-button>
-                <el-button type="primary" size="small" @click="handleAddTask(scope.row, 'share')">分享</el-button>
 
-                <el-dropdown trigger="click">
+            <el-table-column fixed="right" label="操作" width="60" align="center">
+              <template #default="scope">
+                <el-dropdown trigger="hover">
                   <el-button type="primary" text size="small" icon="Expand" />
                   <template #dropdown>
                     <el-dropdown-menu>
@@ -296,65 +316,72 @@ defineOptions({
             </el-table-column>
           </el-table>
         </div>
-
-        <div class="batch-controls-container">
-          <el-collapse>
-            <el-collapse-item title="批次操作區" name="1">
-              <el-card class="mt-4">
-                <el-row :gutter="80">
-                  <el-col :span="12">
-                    <div class="batch-controls">
-                      <h3>批次操控區</h3>
-                      <el-input class="mb-4" type="textarea" v-model="batchComment" placeholder="Enter a comment..." />
-                      <el-button type="primary" @click="handleBatch('comment')">留言</el-button>
-                      <el-button type="primary" @click="handleBatch('like')">按讚</el-button>
-                      <el-button type="primary" @click="handleBatch('share')">分享</el-button>
-                    </div>
-                  </el-col>
-                  <el-col :span="12">
-                    <div class="random-batch-controls mt-4">
-                      <h3>隨機批次操控區（有勾選即只隨機勾選範圍）</h3>
-                      <div>
-                        <el-input
-                          class="mb-4"
-                          type="textarea"
-                          v-model="randomBatchComment"
-                          placeholder="Enter a comment..."
-                        />
-                        <el-button type="primary" @click="handleRandomBatch('comment')">留言</el-button>
-                        <el-button type="primary" @click="handleRandomBatch('like')">按讚</el-button>
-                        <el-button type="primary" @click="handleRandomBatch('share')">分享</el-button>
-                        <el-slider
-                          v-if="tableData && tableData.length > 0"
-                          v-model="randomBatchAmount"
-                          :min="1"
-                          :max="randomBatchMaxAmount"
-                          :step="1"
-                          show-input
-                        />
-                      </div>
-                    </div>
-                  </el-col>
-                </el-row>
-              </el-card>
-            </el-collapse-item>
-          </el-collapse>
-        </div>
-        <!--      <div class="pager-wrapper">-->
-        <!--        <el-pagination-->
-        <!--          background-->
-        <!--          :layout="paginationData.layout"-->
-        <!--          :page-sizes="paginationData.pageSizes"-->
-        <!--          :total="paginationData.total"-->
-        <!--          :page-size="paginationData.pageSize"-->
-        <!--          :currentPage="paginationData.currentPage"-->
-        <!--          @size-change="handleSizeChange"-->
-        <!--          @current-change="handleCurrentChange"-->
-        <!--        />-->
-        <!--      </div>-->
       </el-card>
     </el-scrollbar>
-    <!--  EDIT PLACE-->
+    <!-- PAGINATION PLACE -->
+    <!--      <div class="pager-wrapper">-->
+    <!--        <el-pagination-->
+    <!--          background-->
+    <!--          :layout="paginationData.layout"-->
+    <!--          :page-sizes="paginationData.pageSizes"-->
+    <!--          :total="paginationData.total"-->
+    <!--          :page-size="paginationData.pageSize"-->
+    <!--          :currentPage="paginationData.currentPage"-->
+    <!--          @size-change="handleSizeChange"-->
+    <!--          @current-change="handleCurrentChange"-->
+    <!--        />-->
+    <!--      </div>-->
+
+    <!--  BATCH PLACE -->
+    <div>
+      <div class="toggle-button" :class="{ open: isOpen, closed: !isOpen }">
+        <button @click="isOpen = !isOpen">
+          {{ isOpen ? "收起" : "展開批次操作區" }}
+        </button>
+      </div>
+      <div class="content-area" v-show="isOpen">
+        <div class="batch-controls-container">
+          <el-card class="mt-4">
+            <el-row :gutter="80">
+              <el-col :span="12">
+                <div class="batch-controls">
+                  <h3>批次操控區</h3>
+                  <el-input class="mb-4" type="textarea" v-model="batchComment" placeholder="留言......" />
+                  <el-button type="primary" @click="handleBatch('comment')">留言</el-button>
+                  <el-button type="primary" @click="handleBatch('like')">按讚</el-button>
+                  <el-button type="primary" @click="handleBatch('share')">分享</el-button>
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <div class="random-batch-controls mt-4">
+                  <h3>隨機批次操控區（有勾選即只隨機勾選範圍）</h3>
+                  <div>
+                    <el-input
+                      class="mb-4"
+                      type="textarea"
+                      v-model="randomBatchComment"
+                      placeholder="留言......"
+                    />
+                    <el-button type="primary" @click="handleRandomBatch('comment')">留言</el-button>
+                    <el-button type="primary" @click="handleRandomBatch('like')">按讚</el-button>
+                    <el-button type="primary" @click="handleRandomBatch('share')">分享</el-button>
+                    <el-slider
+                      v-if="tableData && tableData.length > 0"
+                      v-model="randomBatchAmount"
+                      :min="1"
+                      :max="randomBatchMaxAmount"
+                      :step="1"
+                      show-input
+                    />
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+          </el-card>
+        </div>
+      </div>
+    </div>
+    <!--  EDIT PLACE -->
     <el-drawer v-model="editDrawer" direction="rtl">
       <template #header>
         <h4>{{ editPlatform }} 設定</h4>
@@ -380,7 +407,6 @@ defineOptions({
     </el-drawer>
   </div>
 </template>
-
 <style lang="scss" scoped>
 .table-wrapper {
   margin-bottom: 20px;
@@ -391,10 +417,32 @@ defineOptions({
   justify-content: flex-end;
 }
 .batch-controls-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+  position: absolute;
+  bottom: 0;
+  left: 30px; /* Adjust this value according to the width of your Menu */
+  right: 0;
   padding: 16px;
-  z-index: 9999;
+}
+.content-area {
+  transition: all 0.5s ease;
+  position: fixed;
+  bottom: 0;
+  left: 30px; /* Adjust this value according to the width of your Menu */
+  right: 0;
+  z-index: 100;
+}
+
+.toggle-button {
+  position: fixed;
+  right: 40px;
+  z-index: 101;
+}
+
+.toggle-button.open {
+  bottom: 200px;
+}
+
+.toggle-button.closed {
+  bottom: 40px;
 }
 </style>
