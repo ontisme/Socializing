@@ -1,6 +1,6 @@
 {
   "name": "socializing",
-  "version": "3.4.0",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "author": "lyfx",
   "description": "Socializing",
@@ -33,11 +33,10 @@
     "build:x32": "vite build && electron-builder --ia32",
     "lint:eslint": "eslint --cache --max-warnings 0 \"src/**/*.{vue,js,ts,tsx}\" --fix",
     "lint:prettier": "prettier --write  \"src/**/*.{js,ts,json,tsx,css,less,scss,vue,html,md}\"",
-    "lint": "yarn lint:eslint && yarn lint:prettier",
-    "prepare": "husky install"
+    "lint": "yarn lint:eslint && yarn lint:prettier"
   },
   "build": {
-    "productName": "socializing",
+    "productName": "Socializing",
     "appId": "com.app.socializing",
     "directories": {
       "output": "release/v${version}"
@@ -45,7 +44,15 @@
     "extraMetadata": {
       "main": "dist/index.js"
     },
-    "extraResources": [],
+    "extraResources": [ 
+      {
+        "from": "../backend/dist/main",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
     "files": [
       "dist/**/*",
       "static/**/*"
@@ -93,7 +100,7 @@
       "icon": "static/icons/logo_256x256.png",
       "artifactName": "${productName} v${version}.${ext}",
       "desktop": {
-        "Icon": "/opt/socializing/resources/app/static/icons/logo_256x256.png"
+        "Icon": "/opt/Socializing/resources/app/static/icons/logo_256x256.png"
       }
     }
   },
@@ -133,7 +140,6 @@
     "eslint": "^8.41.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.14.1",
-    "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
     "prettier": "^2.8.8",
     "sass": "^1.62.1",
