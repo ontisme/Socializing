@@ -1,0 +1,4 @@
+/backend/build/
+/backend/dist/
+/backend/logs/
+/backend/venv/
