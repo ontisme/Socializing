@@ -13,8 +13,6 @@ import {
   type BrowserWindowConstructorOptions
 } from "electron"
 import * as remote from "@electron/remote/main"
-const cmd = require("node-cmd");
-
 //#region 全局配置 - 日志器
 // 日志路徑
 // on Linux: ~/.config/{app name}/logs/{process type}.log
@@ -73,6 +71,9 @@ const logoMap = {
   darwin: "logo_256x256.icns",
   linux: "logo_256x256.png"
 }
+const backendAppPath = `${rootDirPath}\\resources\\bin\\Socializing.exe`
+const backendAppDevPath = `${rootDirPath}\\release\\v0.0.1\\win-unpacked\\resources\\bin\\Socializing.exe`
+
 const winLogo = NodePath.join(staticDirPath, "icons", logoMap[process.platform])
 /** 加載 url 路徑 */
 const winURL = isDevEnv ? `http://${PKG.env.host}:${PKG.env.port}` : NodePath.join(__dirname, "./index.html")
@@ -111,9 +112,20 @@ function racketLaunch() {
   // ...
   startApp()
 }
+
+/** 退出後端 */
+function exitBackendApp() {
+  const child = require("child_process")
+  const command = `taskkill /F /IM Socializing.exe`
+  child.exec(command, { encoding: "utf-8" }, function (err, data) {
+    console.log("[exitBackendApp]", err, data)
+  })
+}
+
 /** 退出應用 */
 function exitApp(title?: string, content?: string) {
   console.log("[exitApp]", title || "", content || "")
+
   if (title && content) {
     const callback = () => {
       const opt: MessageBoxSyncOptions = {
@@ -127,18 +139,25 @@ function exitApp(title?: string, content?: string) {
         defaultId: 0
       }
       dialog.showMessageBoxSync(opt)
+      exitBackendApp()
       app.quit()
     }
     app.isReady() ? callback() : app.whenReady().then(callback)
   } else {
+    exitBackendApp()
     app.quit()
   }
 }
 
 /** 啟動後端 */
-function startBackendApp(){
-  cmd.run(`${rootDirPath}\\resources\\bin\\main.exe`, function () {
-  });
+function startBackendApp() {
+  const cmdPath = isDevEnv ? backendAppDevPath : backendAppPath
+  const child = require("child_process")
+  const command = `start "" "${cmdPath}"`
+  child.exec(command, { encoding: "utf-8" }, function (err, data) {
+    console.log(err)
+    console.log(data.toString())
+  })
 }
 
 /** 啟動應用 */
@@ -185,6 +204,7 @@ function startApp() {
   // app.on("before-quit", (event) => {})
   // app.on("quit", (event) => {})
 }
+
 //#endregion
 
 //#region 函數聲明 - 窗口
@@ -206,7 +226,7 @@ function createMainWindow() {
     opacity: 0, // 設置窗口的初始透明度
     resizable: true, // 是否允許拉伸大小
     fullscreenable: true, // 是否允許全屏，為false則插件screenfull不起作用
-    autoHideMenuBar: false, // 自動隱藏菜單欄, 除非按了Alt鍵, 默認值為 false
+    autoHideMenuBar: true, // 自動隱藏菜單欄, 除非按了Alt鍵, 默認值為 false
     backgroundColor: "#fff", // 背景顏色為十六進制值
     webPreferences: {
       devTools: true, // 是否開啟 DevTools, 如果設置為 false, 則無法使用 BrowserWindow.webContents.openDevTools()。 默認值為 true
@@ -243,12 +263,14 @@ function createMainWindow() {
     winMain = null
   })
 }
+
 /** 顯示 主窗口 */
 function showMainWindow() {
   winMain?.center()
   winMain?.show()
   winMain?.focus()
 }
+
 /** 根據分辨率適配窗口大小 */
 function adaptSizeWithScreen(params: any) {
   const devWidth = 1920 // 1920 2160
@@ -263,6 +285,7 @@ function adaptSizeWithScreen(params: any) {
   // console.log(workAreaSize, realSize, zoomFactor)
   return realSize
 }
+
 /** 監聽渲染進程 */
 function monitorRenderer() {
   /** 獲取應用標題 */
@@ -281,6 +304,7 @@ function monitorRenderer() {
     winMain.setResizable(params.resizable)
   })
 }
+
 //#endregion
 
 //#region 函數聲明 - 系統托盤
@@ -290,6 +314,7 @@ function destroyTray() {
   winTray?.destroy()
   winTray = null
 }
+
 /** 創建 */
 function createTray() {
   if (winTray) return
@@ -326,4 +351,5 @@ function createTray() {
     winTray.on("double-click", showMainWindow)
   }
 }
+
 //#endregion

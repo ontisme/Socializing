@@ -27,9 +27,9 @@ async def status(profile_index: int):
     condition_2 = server_global.webdrivers[profile_index].driver_is_alive()
     condition_3 = server_global.webdrivers[profile_index].current_task_thread is not None
 
-    print(f"\r\ntask_queue_list: {condition_1}\r\n", f"driver_is_alive: {condition_2}\r\n", f"task_thread: {condition_3}\r\n", f"Result: {(condition_1 or condition_2 or condition_3)}")
+    print(f"\r\ntask_queue_list: {condition_1}\r\n", f"driver_is_alive: {condition_2}\r\n",
+          f"task_thread: {condition_3}\r\n", f"Result: {(condition_1 or condition_2 or condition_3)}")
     return condition_1 or condition_2 or condition_3
-
 
     # print(f"\r\ntask_queue_list: {condition_1}\r\n", f"driver_is_alive: {condition_2}\r\n", f"Result: {(condition_1 or condition_2)}")
     # return condition_1 or condition_2

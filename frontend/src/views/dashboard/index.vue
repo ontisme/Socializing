@@ -28,6 +28,7 @@ const editForm = ref<any>({
 const multipleTableRef = ref()
 const multipleSelection = ref([])
 const isOpen = ref(false)
+const liveId = ref("")
 const toggleCardCollapse = () => {
   cardCollapse.value = !cardCollapse.value
 }
@@ -65,9 +66,9 @@ const handleAddTask = async (data: any, action: string) => {
 
   await browserAddTaskApi({
     profile_index: data.index,
-    script: "C:\\Users\\User\\PycharmProjects\\Socializing\\script\\facebook.py",
+    script: "facebook.py",
     params: {
-      page_id: "100078408274064",
+      page_id: liveId.value,
       action: action,
       comment: data.comment,
       idle_time: 30
@@ -80,6 +81,38 @@ const handleAddTask = async (data: any, action: string) => {
   }
 }
 
+const handleUpdateProfile = async (data: any) => {
+  await browserAddTaskApi({
+    profile_index: data.index,
+    script: "facebook_get_profile.py",
+    params: {}
+  })
+  // 循環檢查 await getBrowserStatusApi(data.index) 等待返回 True 超過一分鐘則跳出錯誤
+  const startTime = Date.now()
+  const timeout = 60000 // 1 minute timeout
+
+  let isBrowserStatusTrue = false
+
+  while (!isBrowserStatusTrue) {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const browserStatus = await getBrowserStatusApi(data.index)
+    if (browserStatus.data === false) {
+      isBrowserStatusTrue = true
+    }
+
+    const elapsedTime = Date.now() - startTime
+    if (elapsedTime >= timeout) {
+      throw new Error("Timeout: Browser status did not return true within 1 minute.")
+    }
+  }
+
+  ElNotification.success({
+    title: "成功",
+    message: `建檔成功 ID:${data.index} 名稱:${data.facebook.name}`,
+    duration: 3000
+  })
+  getTableData()
+}
 const handleDeleteProfile = async (data: any) => {
   // 先跳出確認是否刪除視窗，並且告知僅會刪除配置檔，不會刪除實際的瀏覽器資料
 
@@ -148,39 +181,6 @@ const handleRandomBatch = async (action: string) => {
     }
     await handleAddTask(data, action)
   }
-}
-
-const handleUpdateProfile = async (data: any) => {
-  await browserAddTaskApi({
-    profile_index: data.index,
-    script: "C:\\Users\\User\\PycharmProjects\\Socializing\\script\\facebook_get_profile.py",
-    params: {}
-  })
-  // 循環檢查 await getBrowserStatusApi(data.index) 等待返回 True 超過一分鐘則跳出錯誤
-  const startTime = Date.now()
-  const timeout = 60000 // 1 minute timeout
-
-  let isBrowserStatusTrue = false
-
-  while (!isBrowserStatusTrue) {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    const browserStatus = await getBrowserStatusApi(data.index)
-    if (browserStatus.data === false) {
-      isBrowserStatusTrue = true
-    }
-
-    const elapsedTime = Date.now() - startTime
-    if (elapsedTime >= timeout) {
-      throw new Error("Timeout: Browser status did not return true within 1 minute.")
-    }
-  }
-
-  ElNotification.success({
-    title: "成功",
-    message: `建檔成功 ID:${data.index} 名稱:${data.facebook.name}`,
-    duration: 3000
-  })
-  getTableData()
 }
 
 const handleBatchUpdateProfile = async () => {
@@ -253,10 +253,17 @@ defineOptions({
 <template>
   <div class="app-container">
     <el-scrollbar min-height="500px">
-      <el-card v-loading="loading" shadow="never">
+      <el-card v-loading="loading" class="!border-none" shadow="never">
+        <el-row>
+          <el-col :span="5">
+            <el-button type="primary" @click="getTableData">更新列表</el-button>
+            <el-button type="primary" @click="handleBatchUpdateProfile">批次建檔</el-button>
+          </el-col>
+          <el-col :span="5">
+            <el-input v-model="liveId" label="直播ID" placeholder="直播ID" class="w-64" />
+          </el-col>
+        </el-row>
         <div class="table-wrapper">
-          <el-button type="primary" @click="getTableData">更新列表</el-button>
-          <el-button type="primary" @click="handleBatchUpdateProfile">批次建檔</el-button>
           <el-table
             ref="multipleTableRef"
             :data="tableData"
@@ -356,12 +363,7 @@ defineOptions({
                 <div class="random-batch-controls mt-4">
                   <h3>隨機批次操控區（有勾選即只隨機勾選範圍）</h3>
                   <div>
-                    <el-input
-                      class="mb-4"
-                      type="textarea"
-                      v-model="randomBatchComment"
-                      placeholder="留言......"
-                    />
+                    <el-input class="mb-4" type="textarea" v-model="randomBatchComment" placeholder="留言......" />
                     <el-button type="primary" @click="handleRandomBatch('comment')">留言</el-button>
                     <el-button type="primary" @click="handleRandomBatch('like')">按讚</el-button>
                     <el-button type="primary" @click="handleRandomBatch('share')">分享</el-button>

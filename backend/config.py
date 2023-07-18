@@ -19,6 +19,14 @@ BROWSER_BIN_PATH = os.path.join(SYSTEM_FOLDER_PATH, 'BrowserBin', 'chrome-win')
 # 日誌位置
 LOG_FOLDER_PATH = os.path.join(SYSTEM_FOLDER_PATH, 'Logs')
 
+# Script位置
+SCRIPT_FOLDER_PATH = os.path.join(SYSTEM_FOLDER_PATH, 'BrowserScript')
+# 腳本列表
+SCRIPT_URL_LIST = [
+    "https://socializing.sakurafb.cc/scripts/facebook.py",
+    "https://socializing.sakurafb.cc/scripts/facebook_get_profile.py"
+]
+
 
 def dict_get(d, keys, default=None):
     """

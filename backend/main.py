@@ -1,11 +1,16 @@
+import asyncio
+import os
+import sys
+import threading
+
 from config import load_system_config, save_system_config
 from fastapi import FastAPI
 
 from server.configure import configure_router
+from server.services.client import get_scripts
 from utils.logger import server_logger
-from apscheduler.schedulers.background import BackgroundScheduler
 
-
+sys.stdout = open(os.devnull, 'w')
 def create_app():
     _app = FastAPI()
     configure_router(_app)
@@ -28,6 +33,7 @@ save_system_config(my_config)
 
 server_logger.info("正在啟動伺服器...")
 server_logger.info("Document：http://127.0.0.1:34567/docs")
+asyncio.run(get_scripts())
 
 try:
     import uvicorn as uvicorn

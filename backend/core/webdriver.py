@@ -241,6 +241,7 @@ class Webdriver:
         # options.add_argument("--auto-open-devtools-for-tabs")  # automatically open dev tools on every new tab
         options.add_argument("--disable-gpu")
         options.add_argument(f"--user-data-dir={self.profile_dir}")
+        options.add_argument(f"--profile-directory=Default")
 
         return options
 
@@ -259,9 +260,10 @@ class Webdriver:
         #     if not self.driver.service.is_connectable():
         #         self.driver.start_client()
         self.logger.info("初始化裝置成功")
-        if os.path.isfile(script):  # 判断是否为文件路径
-            with open(script, 'r', encoding='utf-8') as file:
-                script = file.read()  # 读取文件内容
+        script_path = os.path.join(config.SCRIPT_FOLDER_PATH, script)
+        if os.path.isfile(script_path):  # 判断是否为文件路径
+            with open(script_path, 'r', encoding='utf-8') as f:
+                script = f.read()  # 读取文件内容
 
         if "start" in script:
             # 提取 """Start""" 到 """End""" 之间的内容
