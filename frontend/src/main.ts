@@ -5,7 +5,6 @@ import store from "@/store"
 import router from "@/router"
 import "@/router/permission"
 // load
-import "@/utils/with-prototype"
 import { loadSvg } from "@/icons"
 import { loadPlugins } from "@/plugins"
 import { loadDirectives } from "@/directives"
@@ -27,7 +26,4 @@ loadSvg(app)
 /** 加载自定义指令 */
 loadDirectives(app)
 
-app.use(store).use(router)
-router.isReady().then(() => {
-  app.mount("#app")
-})
+app.use(store).use(router).mount("#app")

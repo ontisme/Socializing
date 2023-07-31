@@ -4,74 +4,74 @@ import { ElMessage } from "element-plus"
 import { get } from "lodash-es"
 import { getToken } from "./cache/sessionStorage"
 
-/** 創建請求實例 */
+/** 创建请求实例 */
 function createService() {
-  // 創建一個 Axios 實例
+  // 创建一个 Axios 实例
   const service = axios.create()
-  // 請求攔截
+  // 请求拦截
   service.interceptors.request.use(
     (config) => config,
-    // 發送失敗
+    // 发送失败
     (error) => Promise.reject(error)
   )
-  // 響應攔截（可根據具體業務作出相應的調整）
+  // 响应拦截（可根据具体业务作出相应的调整）
   service.interceptors.response.use(
     (response) => {
-      // apiData 是 API 返回的數據
+      // apiData 是 API 返回的数据
       const apiData = response.data as any
-      // 這個 Code 是和後端約定的業務 Code
+      // 这个 Code 是和后端约定的业务 Code
       const code = apiData.code
-      // 如果沒有 Code, 代表這不是項目後端開發的 API
+      // 如果没有 Code, 代表这不是项目后端开发的 API
       if (code === undefined) {
-        ElMessage.error("非本系統的接口")
-        return Promise.reject(new Error("非本系統的接口"))
+        ElMessage.error("非本系统的接口")
+        return Promise.reject(new Error("非本系统的接口"))
       } else {
         switch (code) {
           case 0:
-            // code === 0 代表沒有錯誤
+            // code === 0 代表没有错误
             return apiData
           default:
-            // 不是正確的 Code
+            // 不是正确的 Code
             ElMessage.error(apiData.message || "Error")
             return Promise.reject(new Error("Error"))
         }
       }
     },
     (error) => {
-      // Status 是 HTTP 狀態碼
+      // Status 是 HTTP 状态码
       const status = get(error, "response.status")
       switch (status) {
         case 400:
-          error.message = "請求錯誤"
+          error.message = "请求错误"
           break
         case 401:
-          // Token 過期時，直接退出登入並強制刷新頁面（會重定向到登入頁）
+          // Token 过期时，直接退出登录并强制刷新页面（会重定向到登录页）
           useUserStoreHook().logout()
           location.reload()
           break
         case 403:
-          error.message = "拒絕訪問"
+          error.message = "拒绝访问"
           break
         case 404:
-          error.message = "請求地址出錯"
+          error.message = "请求地址出错"
           break
         case 408:
-          error.message = "請求超時"
+          error.message = "请求超时"
           break
         case 500:
-          error.message = "服務器內部錯誤"
+          error.message = "服务器内部错误"
           break
         case 501:
-          error.message = "服務未實現"
+          error.message = "服务未实现"
           break
         case 502:
-          error.message = "網關錯誤"
+          error.message = "网关错误"
           break
         case 503:
-          error.message = "服務不可用"
+          error.message = "服务不可用"
           break
         case 504:
-          error.message = "網關超時"
+          error.message = "网关超时"
           break
         case 505:
           error.message = "HTTP 版本不受支持"
@@ -86,24 +86,24 @@ function createService() {
   return service
 }
 
-/** 創建請求方法 */
+/** 创建请求方法 */
 function createRequestFunction(service: AxiosInstance) {
-  return function <T>(config: AxiosRequestConfig): Promise<T> {
+  return function (config: AxiosRequestConfig) {
     const configDefault = {
       headers: {
-        // 攜帶 Token
+        // 携带 Token
         Authorization: "Bearer " + getToken(),
         "Content-Type": get(config, "headers.Content-Type", "application/json")
       },
       timeout: 60000,
-      baseURL: "http://localhost:34567/api/",
+      baseURL: "api/",
       data: {}
     }
     return service(Object.assign(configDefault, config))
   }
 }
 
-/** 用於網絡請求的實例 */
+/** 用于网络请求的实例 */
 export const service = createService()
-/** 用於網絡請求的方法 */
+/** 用于网络请求的方法 */
 export const request = createRequestFunction(service)

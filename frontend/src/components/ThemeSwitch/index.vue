@@ -1,14 +1,18 @@
 <script lang="ts" setup>
-import { useTheme } from "@/hooks/useTheme"
+import { type ThemeName, useTheme } from "@/hooks/useTheme"
 import { MagicStick } from "@element-plus/icons-vue"
 
 const { themeList, activeThemeName, setTheme } = useTheme()
+
+const handleSetTheme = (name: ThemeName) => {
+  setTheme(name)
+}
 </script>
 
 <template>
-  <el-dropdown trigger="click" @command="setTheme">
+  <el-dropdown trigger="click" @command="handleSetTheme">
     <div>
-      <el-tooltip effect="dark" content="主題模式" placement="bottom">
+      <el-tooltip effect="dark" content="主题模式" placement="bottom">
         <el-icon :size="20">
           <MagicStick />
         </el-icon>

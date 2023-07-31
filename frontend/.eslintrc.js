@@ -1,13 +1,21 @@
+// eslint-disable-next-line no-undef
 module.exports = {
   root: true,
   env: {
-    browser: true,
-    node: true,
+    // browser: true,
+    // node: true,
     es6: true
   },
+  globals: {
+    // script setup
+    defineProps: "readonly",
+    defineEmits: "readonly",
+    defineExpose: "readonly",
+    withDefaults: "readonly"
+  },
   extends: [
-    "plugin:vue/vue3-essential",
     "eslint:recommended",
+    "plugin:vue/vue3-essential",
     "@vue/typescript/recommended",
     "@vue/prettier",
     "@vue/eslint-config-typescript"
@@ -25,9 +33,8 @@ module.exports = {
   },
   rules: {
     // TS
-    "no-debugger": "off",
-    "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "no-debugger": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/ban-ts-comment": "off",

@@ -1,14 +1,9 @@
 <script lang="ts" setup>
 import { reactive, ref, watch } from "vue"
 import { createTableDataApi, deleteTableDataApi, updateTableDataApi, getTableDataApi } from "@/api/table"
-import { type GetTableData } from "@/api/table/types/table"
 import { type FormInstance, type FormRules, ElMessage, ElMessageBox } from "element-plus"
 import { Search, Refresh, CirclePlus, Delete, Download, RefreshRight } from "@element-plus/icons-vue"
 import { usePagination } from "@/hooks/usePagination"
-
-defineOptions({
-  name: "ElementPlus"
-})
 
 const loading = ref<boolean>(false)
 const { paginationData, handleCurrentChange, handleSizeChange } = usePagination()
@@ -21,8 +16,8 @@ const formData = reactive({
   password: ""
 })
 const formRules: FormRules = reactive({
-  username: [{ required: true, trigger: "blur", message: "請輸入用户名" }],
-  password: [{ required: true, trigger: "blur", message: "請輸入密碼" }]
+  username: [{ required: true, trigger: "blur", message: "请输入用户名" }],
+  password: [{ required: true, trigger: "blur", message: "请输入密码" }]
 })
 const handleCreate = () => {
   formRef.value?.validate((valid: boolean) => {
@@ -59,7 +54,7 @@ const resetForm = () => {
 //#endregion
 
 //#region 删
-const handleDelete = (row: GetTableData) => {
+const handleDelete = (row: any) => {
   ElMessageBox.confirm(`正在删除用户：${row.username}，确认删除？`, "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -75,15 +70,16 @@ const handleDelete = (row: GetTableData) => {
 
 //#region 改
 const currentUpdateId = ref<undefined | string>(undefined)
-const handleUpdate = (row: GetTableData) => {
+const handleUpdate = (row: any) => {
   currentUpdateId.value = row.id
   formData.username = row.username
+  formData.password = row.password
   dialogVisible.value = true
 }
 //#endregion
 
 //#region 查
-const tableData = ref<GetTableData[]>([])
+const tableData = ref<any[]>([])
 const searchFormRef = ref<FormInstance | null>(null)
 const searchData = reactive({
   username: "",
@@ -97,7 +93,7 @@ const getTableData = () => {
     username: searchData.username || undefined,
     phone: searchData.phone || undefined
   })
-    .then((res) => {
+    .then((res: any) => {
       paginationData.total = res.data.total
       tableData.value = res.data.list
     })
@@ -135,10 +131,10 @@ watch([() => paginationData.currentPage, () => paginationData.pageSize], getTabl
     <el-card v-loading="loading" shadow="never" class="search-wrapper">
       <el-form ref="searchFormRef" :inline="true" :model="searchData">
         <el-form-item prop="username" label="用户名">
-          <el-input v-model="searchData.username" placeholder="請輸入" />
+          <el-input v-model="searchData.username" placeholder="请输入" />
         </el-form-item>
         <el-form-item prop="phone" label="手机号">
-          <el-input v-model="searchData.phone" placeholder="請輸入" />
+          <el-input v-model="searchData.phone" placeholder="请输入" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
@@ -210,10 +206,10 @@ watch([() => paginationData.currentPage, () => paginationData.pageSize], getTabl
     >
       <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px" label-position="left">
         <el-form-item prop="username" label="用户名">
-          <el-input v-model="formData.username" placeholder="請輸入" />
+          <el-input v-model="formData.username" placeholder="请输入" />
         </el-form-item>
-        <el-form-item prop="password" label="密碼" v-if="currentUpdateId === undefined">
-          <el-input v-model="formData.password" placeholder="請輸入" />
+        <el-form-item prop="password" label="密码">
+          <el-input v-model="formData.password" placeholder="请输入" />
         </el-form-item>
       </el-form>
       <template #footer>

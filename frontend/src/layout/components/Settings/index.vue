@@ -7,13 +7,13 @@ const settingsStore = useSettingsStore()
 <template>
   <div class="drawer-container">
     <div>
-      <h3 class="drawer-title">系統布局配置</h3>
+      <h3 class="drawer-title">系统布局配置</h3>
       <div class="drawer-item">
-        <span>顯示標簽欄</span>
+        <span>显示标签栏</span>
         <el-switch v-model="settingsStore.showTagsView" class="drawer-switch" />
       </div>
       <div class="drawer-item">
-        <span>顯示側邊欄 Logo</span>
+        <span>显示侧边栏 Logo</span>
         <el-switch v-model="settingsStore.showSidebarLogo" class="drawer-switch" />
       </div>
       <div class="drawer-item">
@@ -21,23 +21,23 @@ const settingsStore = useSettingsStore()
         <el-switch v-model="settingsStore.fixedHeader" class="drawer-switch" />
       </div>
       <div class="drawer-item">
-        <span>顯示消息通知</span>
+        <span>显示消息通知</span>
         <el-switch v-model="settingsStore.showNotify" class="drawer-switch" />
       </div>
       <div class="drawer-item">
-        <span>顯示切換主題按鈕</span>
+        <span>显示切换主题按钮</span>
         <el-switch v-model="settingsStore.showThemeSwitch" class="drawer-switch" />
       </div>
       <div class="drawer-item">
-        <span>顯示全屏按鈕</span>
+        <span>显示全屏按钮</span>
         <el-switch v-model="settingsStore.showScreenfull" class="drawer-switch" />
       </div>
       <div class="drawer-item">
-        <span>顯示灰色模式</span>
+        <span>显示灰色模式</span>
         <el-switch v-model="settingsStore.showGreyMode" class="drawer-switch" />
       </div>
       <div class="drawer-item">
-        <span>顯示色弱模式</span>
+        <span>显示色弱模式</span>
         <el-switch v-model="settingsStore.showColorWeakness" class="drawer-switch" />
       </div>
     </div>

@@ -3,22 +3,30 @@ import store from "@/store"
 import { defineStore } from "pinia"
 import { type RouteRecordRaw } from "vue-router"
 import { constantRoutes, asyncRoutes } from "@/router"
-import asyncRouteSettings from "@/config/async-route"
 
 const hasPermission = (roles: string[], route: RouteRecordRaw) => {
-  const routeRoles = route.meta?.roles
-  return routeRoles ? roles.some((role) => routeRoles.includes(role)) : true
+  if (route.meta && route.meta.roles) {
+    return roles.some((role) => {
+      if (route.meta?.roles !== undefined) {
+        return route.meta.roles.includes(role)
+      } else {
+        return false
+      }
+    })
+  } else {
+    return true
+  }
 }
 
 const filterAsyncRoutes = (routes: RouteRecordRaw[], roles: string[]) => {
   const res: RouteRecordRaw[] = []
   routes.forEach((route) => {
-    const tempRoute = { ...route }
-    if (hasPermission(roles, tempRoute)) {
-      if (tempRoute.children) {
-        tempRoute.children = filterAsyncRoutes(tempRoute.children, roles)
+    const r = { ...route }
+    if (hasPermission(roles, r)) {
+      if (r.children) {
+        r.children = filterAsyncRoutes(r.children, roles)
       }
-      res.push(tempRoute)
+      res.push(r)
     }
   })
   return res
@@ -29,7 +37,12 @@ export const usePermissionStore = defineStore("permission", () => {
   const dynamicRoutes = ref<RouteRecordRaw[]>([])
 
   const setRoutes = (roles: string[]) => {
-    const accessedRoutes = asyncRouteSettings.open ? filterAsyncRoutes(asyncRoutes, roles) : asyncRoutes
+    let accessedRoutes
+    if (roles.includes("admin")) {
+      accessedRoutes = asyncRoutes
+    } else {
+      accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+    }
     routes.value = constantRoutes.concat(accessedRoutes)
     dynamicRoutes.value = accessedRoutes
   }

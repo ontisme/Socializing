@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { getCurrentInstance, onMounted, ref, watch } from "vue"
-import { type RouteRecordRaw, RouterLink, useRoute, useRouter } from "vue-router"
-import { type TagView, useTagsViewStore } from "@/store/modules/tags-view"
+import { type RouteRecordRaw, useRoute, useRouter } from "vue-router"
+import { type ITagView, useTagsViewStore } from "@/store/modules/tags-view"
 import { usePermissionStore } from "@/store/modules/permission"
 import ScrollPane from "./ScrollPane.vue"
 import path from "path-browserify"
@@ -13,24 +13,22 @@ const route = useRoute()
 const tagsViewStore = useTagsViewStore()
 const permissionStore = usePermissionStore()
 
-const tagRefs = ref<InstanceType<typeof RouterLink>[]>([])
-
 const visible = ref(false)
 const top = ref(0)
 const left = ref(0)
-const selectedTag = ref<TagView>({})
-let affixTags: TagView[] = []
+const selectedTag = ref<ITagView>({})
+let affixTags: ITagView[] = []
 
-const isActive = (tag: TagView) => {
+const isActive = (tag: ITagView) => {
   return tag.path === route.path
 }
 
-const isAffix = (tag: TagView) => {
+const isAffix = (tag: ITagView) => {
   return tag.meta?.affix
 }
 
 const filterAffixTags = (routes: RouteRecordRaw[], basePath = "/") => {
-  let tags: TagView[] = []
+  let tags: ITagView[] = []
   routes.forEach((route) => {
     if (route.meta?.affix) {
       const tagPath = path.resolve(basePath, route.path)
@@ -64,18 +62,15 @@ const initTags = () => {
 const addTags = () => {
   if (route.name) {
     tagsViewStore.addVisitedView(route)
-    tagsViewStore.addCachedView(route)
   }
 }
 
-const refreshSelectedTag = (view: TagView) => {
-  tagsViewStore.delCachedView(view)
+const refreshSelectedTag = (view: ITagView) => {
   router.replace({ path: "/redirect" + view.path, query: view.query })
 }
 
-const closeSelectedTag = (view: TagView) => {
+const closeSelectedTag = (view: ITagView) => {
   tagsViewStore.delVisitedView(view)
-  tagsViewStore.delCachedView(view)
   if (isActive(view)) {
     toLastView(tagsViewStore.visitedViews, view)
   }
@@ -86,19 +81,17 @@ const closeOthersTags = () => {
     router.push(selectedTag.value.fullPath)
   }
   tagsViewStore.delOthersVisitedViews(selectedTag.value)
-  tagsViewStore.delOthersCachedViews(selectedTag.value)
 }
 
-const closeAllTags = (view: TagView) => {
+const closeAllTags = (view: ITagView) => {
   tagsViewStore.delAllVisitedViews()
-  tagsViewStore.delAllCachedViews()
   if (affixTags.some((tag) => tag.path === route.path)) {
     return
   }
   toLastView(tagsViewStore.visitedViews, view)
 }
 
-const toLastView = (visitedViews: TagView[], view: TagView) => {
+const toLastView = (visitedViews: ITagView[], view: ITagView) => {
   const latestView = visitedViews.slice(-1)[0]
   if (latestView !== undefined && latestView.fullPath !== undefined) {
     router.push(latestView.fullPath)
@@ -113,7 +106,7 @@ const toLastView = (visitedViews: TagView[], view: TagView) => {
   }
 }
 
-const openMenu = (tag: TagView, e: MouseEvent) => {
+const openMenu = (tag: ITagView, e: MouseEvent) => {
   const menuMinWidth = 105
   // container margin left
   const offsetLeft = instance!.proxy!.$el.getBoundingClientRect().left
@@ -163,9 +156,8 @@ onMounted(() => {
 
 <template>
   <div class="tags-view-container">
-    <ScrollPane class="tags-view-wrapper" :tag-refs="tagRefs">
+    <ScrollPane class="tags-view-wrapper">
       <router-link
-        ref="tagRefs"
         v-for="tag in tagsViewStore.visitedViews"
         :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"

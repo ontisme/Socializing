@@ -15,6 +15,7 @@ export const getCssVariableValue = (cssVariableName: string) => {
   try {
     // 没有拿到值时，会返回空串
     cssVariableValue = getComputedStyle(document.documentElement).getPropertyValue(cssVariableName)
+    console.log(cssVariableName)
   } catch (error) {
     console.error(error)
   }

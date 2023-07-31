@@ -12,7 +12,7 @@ async def login(login_in: UserLoginIn):
     data = {
         "token": "1234567890"
     }
-    print("登入帳號：", login_in.account)
+    print("登入帳號：", login_in.username)
     return response_ok("登入成功", data)
 
 

@@ -11,13 +11,13 @@
   --v3-sidebar-width: 220px;
   --v3-sidebar-hide-width: 58px;
   --v3-sidebar-menu-item-height: 60px;
-  --v3-sidebar-menu-tip-line-bg-color: #ffffff;
-  --v3-sidebar-menu-bg-color: #1E1F22;
+  --v3-sidebar-menu-tip-line-bg-color: var(--el-color-primary);
+  --v3-sidebar-menu-bg-color: #2a2a2a;
   --v3-sidebar-menu-hover-bg-color: #ffffff10;
   --v3-sidebar-menu-text-color: #c0c4cc;
   --v3-sidebar-menu-active-text-color: #ffffff;
   /** SidebarLogo 组件 */
-  --v3-sidebarlogo-bg-color: #1E1F22;
+  --v3-sidebarlogo-bg-color: #2a2a2a;
   /** TagsView 组件 */
   --v3-tagsview-height: 34px;
   --v3-tagsview-tag-text-color: #495060;
@@ -31,5 +31,5 @@
   --v3-tagsview-tag-icon-hover-bg-color: #00000030;
   --v3-tagsview-tag-icon-hover-color: #ffffff;
   /** RightPanel 组件  */
-  --v3-rightpanel-button-bg-color: #1E1F22;
+  --v3-rightpanel-button-bg-color: #001428;
 }

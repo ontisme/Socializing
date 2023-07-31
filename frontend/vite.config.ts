@@ -1,31 +1,23 @@
-import { rmSync } from "fs"
-import { resolve } from "path"
 import { defineConfig } from "vite"
+import { resolve } from "path"
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
 import vue from "@vitejs/plugin-vue"
 import UnoCSS from "unocss/vite"
 import vueJsx from "@vitejs/plugin-vue-jsx"
 import svgLoader from "vite-svg-loader"
-import electron from "vite-electron-plugin"
-import pkg from "./package.json"
 
-/** 清空dist */
-rmSync("dist", { recursive: true, force: true })
+const isDebug = process.env.TAURI_DEBUG === "true"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  clearScreen: false,
-  server: {
-    /** 是否自动打开浏览器 */
-    open: false, // true false
-    host: pkg.env.host,
-    port: pkg.env.port
-  },
+  // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
+  // prevent vite from obscuring rust errors
+  clearScreen: true,
   plugins: [
     vue(),
     vueJsx(),
     /** 将 SVG 静态图转化为 Vue 组件 */
-    svgLoader({ defaultImport: "url" }),
+    svgLoader(),
     UnoCSS(),
     /** SVG 插件 */
     createSvgIconsPlugin({
@@ -34,18 +26,25 @@ export default defineConfig({
       // Specify symbolId format
       symbolId: "icon-[dir]-[name]",
       inject: "body-first"
-    }),
-    electron({
-      outDir: "dist",
-      include: ["script"],
-      transformOptions: {
-        sourcemap: false
-      }
     })
   ],
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src") // 路径别名
+    }
+  },
+  // tauri expects a fixed port, fail if that port is not available
+  server: {
+    open: true,
+    host: "0.0.0.0",
+    port: 1420,
+    strictPort: true,
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:34567/api/",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, "") // 不可以省略rewrite，否则接口代理不成功
+      }
     }
   },
   css: {
@@ -64,34 +63,31 @@ export default defineConfig({
       ]
     }
   },
+  // to make use of `TAURI_DEBUG` and other env variables
+  // https://tauri.studio/v1/api/config#buildconfig.beforedevcommand
+  envPrefix: ["VITE_", "TAURI_"],
   build: {
-    // emptyOutDir: true,
-    /** 打包后静态资源目录 */
-    // assetsDir: "",
+    // Tauri supports es2021
+    target: process.env.TAURI_PLATFORM == "windows" ? "chrome105" : "safari13",
+    // produce sourcemaps for debug builds
+    sourcemap: isDebug,
     /** 消除打包大小超过 500kb 警告 */
     chunkSizeWarningLimit: 2000,
     /** vite 2.6.x 以上需要配置 minify: terser，terserOptions 才能生效 */
-    minify: "terser",
+    minify: isDebug ? false : "terser",
     /** 在 build 代码时移除 console.log、debugger 和 注释 */
-    terserOptions: {
-      compress: {
-        drop_console: false,
-        drop_debugger: true,
-        pure_funcs: ["console.log"]
-      },
-      output: {
-        /** 删除注释 */
-        comments: false
-      }
-    },
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            return id.toString().split("node_modules/")[1].split("/")[0].toString()
+    terserOptions: isDebug
+      ? null
+      : {
+          compress: {
+            drop_console: false,
+            drop_debugger: true,
+            pure_funcs: ["console.log"]
+          },
+          output: {
+            /** 删除注释 */
+            comments: false
           }
         }
-      }
-    }
   }
 })

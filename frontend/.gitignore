@@ -2,10 +2,10 @@
 
 .DS_Store
 node_modules
-dist*
-release
+dist
+dist-ssr
 .eslintcache
-src-*
+src-tauri/target/*
 
 # Local env files
 *.local
@@ -23,7 +23,6 @@ lerna-debug.log*
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
-!.vscode/*.code-snippets
 .idea
 *.suo
 *.ntvs*
@@ -34,5 +33,3 @@ lerna-debug.log*
 # Use the PNPM
 package-lock.json
 yarn.lock
-/.vscode/
-/build/

@@ -2,7 +2,6 @@
 import { nextTick, reactive, ref } from "vue"
 import { type ElMessageBoxOptions, ElMessageBox, ElMessage } from "element-plus"
 import { deleteTableDataApi, getTableDataApi } from "@/api/table"
-import { type GetTableResponseData } from "@/api/table/types/table"
 import RoleColumnSolts from "./tsx/RoleColumnSolts"
 import StatusColumnSolts from "./tsx/StatusColumnSolts"
 import {
@@ -16,12 +15,8 @@ import {
   type VxeFormDefines
 } from "vxe-table"
 
-defineOptions({
-  name: "VxeTable"
-})
-
 //#region vxe-grid
-interface RowMeta {
+interface IRowMeta {
   id: string
   username: string
   roles: string
@@ -141,9 +136,9 @@ const xGridOpt: VxeGridProps = reactive({
         crudStore.clearTable()
         return new Promise<any>((resolve: Function) => {
           let total = 0
-          let result: RowMeta[] = []
+          let result: IRowMeta[] = []
           /** 加载数据 */
-          const callback = (res: GetTableResponseData) => {
+          const callback = (res: any) => {
             if (res && res.data) {
               const resData = res.data
               // 总数
@@ -207,12 +202,12 @@ const xFormOpt = reactive<VxeFormProps>({
     {
       field: "username",
       title: "用户名",
-      itemRender: { name: "$input", props: { placeholder: "請輸入" } }
+      itemRender: { name: "$input", props: { placeholder: "请输入" } }
     },
     {
       field: "password",
-      title: "密碼",
-      itemRender: { name: "$input", props: { placeholder: "請輸入" } }
+      title: "密码",
+      itemRender: { name: "$input", props: { placeholder: "请输入" } }
     },
     {
       align: "right",
@@ -235,7 +230,7 @@ const xFormOpt = reactive<VxeFormProps>({
         required: true,
         validator: ({ itemValue }) => {
           if (!itemValue) {
-            return new Error("請輸入")
+            return new Error("请输入")
           }
           if (!itemValue.trim()) {
             return new Error("空格无效")
@@ -248,7 +243,7 @@ const xFormOpt = reactive<VxeFormProps>({
         required: true,
         validator: ({ itemValue }) => {
           if (!itemValue) {
-            return new Error("請輸入")
+            return new Error("请输入")
           }
           if (!itemValue.trim()) {
             return new Error("空格无效")
@@ -269,7 +264,7 @@ const crudStore = reactive({
   /** 清空表格数据 */
   clearTable: () => xGridDom.value?.reloadData([]),
   /** 点击显示弹窗 */
-  onShowModal: (row?: RowMeta) => {
+  onShowModal: (row?: IRowMeta) => {
     if (row) {
       crudStore.isUpdate = true
       xModalOpt.title = "修改用户"
@@ -316,7 +311,7 @@ const crudStore = reactive({
   },
   /** 新增后是否跳入最后一页 */
   afterInsert: () => {
-    const pager: VxeGridPropTypes.ProxyAjaxQueryPageParams | undefined = xGridDom.value?.getProxyInfo()?.pager
+    const pager: VxeGridPropTypes.ProxyAjaxQueryPageParams = xGridDom.value?.getProxyInfo()?.pager
     if (pager) {
       const currTotal: number = pager.currentPage * pager.pageSize
       if (currTotal === pager.total) {
@@ -325,7 +320,7 @@ const crudStore = reactive({
     }
   },
   /** 删除 */
-  onDelete: (row: RowMeta) => {
+  onDelete: (row: IRowMeta) => {
     const tip = `确定 <strong style='color:red;'>删除</strong> 用户 <strong style='color:#409eff;'>${row.username}</strong> ？`
     const config: ElMessageBoxOptions = {
       type: "warning",
@@ -350,8 +345,8 @@ const crudStore = reactive({
   },
   /** 删除后是否返回上一页 */
   afterDelete: () => {
-    const tableData: RowMeta[] = xGridDom.value!.getData()
-    const pager: VxeGridPropTypes.ProxyAjaxQueryPageParams | undefined = xGridDom.value?.getProxyInfo()?.pager
+    const tableData: IRowMeta[] = xGridDom.value!.getData()
+    const pager: VxeGridPropTypes.ProxyAjaxQueryPageParams = xGridDom.value?.getProxyInfo()?.pager
     if (pager && pager.currentPage > 1 && tableData.length === 1) {
       --pager.currentPage
     }

@@ -1,22 +1,31 @@
-# 简介
+<div align="center">
+  <h1>V3 Tauri Vite</h1>
+</div>
 
-🥳 `Electron` + `Vue3` + `Vite` + `Pinia` + `Element-Plus` + `TypeScript`.
+## ⚡ 简介
 
-src 渲染进程的源码主要来自 [v3-admin-vite](https://github.com/un-pany/v3-admin-vite).
+用前端技术构建一个更小、更快、更安全的桌面应用程序，基于 Tauri、Vue3、TypeScript、Element Plus、Pinia 和 Vite 等主流技术.
 
-## 运行项目
+- main 分支：源码来自[v3-admin-vite](https://github.com/un-pany/v3-admin-vite)
+- mini 分支：精简版，仅有登录页和主页
+
+## ⏳ 准备
+
+- 安装 `Rust` 与系统依赖，详细步骤请参考[官网](https://tauri.app/zh-cn/v1/guides/getting-started/prerequisites)
+
+- win10 及以下需要注意，`Tauri` 需要 WebView2 才可以运行，若是缺少 WebView2 ，可通过 `libs/MicrosoftEdgeWebview2Setup.exe` 进行安装
+
+## 🚀 开发
 
 ```bash
-# 配置
-1. 安装 .vscode 中推荐的插件
-2. node 版本 16+
-3. pnpm 版本 8.x
 
-# 克隆项目
-git clone https://github.com/un-pany/bonus365.git
+# 配置
+1. 一键安装 .vscode 目录中推荐的插件
+2. node 版本 16+
+3. pnpm 版本 7.x
 
 # 进入项目目录
-cd bonus365
+cd v3-tauri-vite
 
 # 安装依赖
 pnpm i
@@ -31,16 +40,20 @@ pnpm dev
 pnpm up --latest
 ```
 
-## 打包
+## 🔧 代码格式检查
 
-打包配置，请参考文档 [electron-builder](https://www.electron.build/)
+```bash
+pnpm lint
+```
+
+## 📦️ 多环境打包
+
+- 若是无法下载 `wix311-binaries.zip`，则将 `libs/WixTools.zip` 解压后放在 `%USERPROFILE%\AppData\Local\tauri` 目录下，如下图所示
+  ![](./libs/WixTools.png)
 
 ```bash
 # 根据当前系统环境构建
 pnpm build
-
-# 打包成解压后的目录
-pnpm build:dir
 
 # 构建 x64 位
 pnpm build:x64
@@ -49,33 +62,7 @@ pnpm build:x64
 pnpm build:x32
 ```
 
-## 代码格式检查
-
-```bash
-pnpm lint
-```
-
-## 目录结构
-
-```tree
-├── dist                构建后
-├   ├── assets
-├   ├── index.html
-├   ├── index.js
-├
-├── script              主进程源码
-├   ├── index.ts
-├
-├── src                 渲染进程源码
-├   ├── api
-├   ├── assets
-├   ├── ......
-├
-├── static              静态资源
-├   ├── icons           系统图标
-```
-
-## Git 提交规范
+## ✨ Git 提交规范参考
 
 - `feat` 增加新的业务功能
 - `fix` 修复业务问题/BUG
@@ -91,8 +78,7 @@ pnpm lint
 - `types` 类型定义文件更改
 - `wip` 开发中
 
-## 站在巨人的肩膀上
+## 📄 参考资料
 
-- [electron-vite-vue](https://github.com/electron-vite/electron-vite-vue)
-- [electron-vue-admin](https://github.com/PanJiaChen/electron-vue-admin)
-- [fast-vue3](https://github.com/study-vue3/fast-vue3)
+- [Tauri 官网](https://tauri.app/)
+- [Tauri 应用](https://juejin.cn/post/7116185354293477383)

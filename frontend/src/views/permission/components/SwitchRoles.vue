@@ -2,9 +2,8 @@
 import { ref, watch } from "vue"
 import { useUserStore } from "@/store/modules/user"
 
-/** Vue 3.3+ defineEmits 语法 */
 const emit = defineEmits<{
-  change: []
+  (e: "change"): void
 }>()
 
 const userStore = useUserStore()

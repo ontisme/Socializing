@@ -15,7 +15,9 @@ PROFILE_CONFIG_FOLDER_PATH = os.path.join(SYSTEM_FOLDER_PATH, 'BrowserProfile')
 # 瀏覽器裝置的備份檔存檔位置
 PROFILE_BACKUP_FOLDER_PATH = os.path.join(SYSTEM_FOLDER_PATH, 'BrowserBackup')
 # 瀏覽器主程式位置
-BROWSER_BIN_PATH = os.path.join(SYSTEM_FOLDER_PATH, 'BrowserBin', 'chrome-win')
+BROWSER_BIN_PATH = os.path.join(SYSTEM_FOLDER_PATH, 'BrowserBin')
+# 瀏覽器主程式位置
+BROWSER_BIN_WIN_PATH = os.path.join(BROWSER_BIN_PATH, 'chrome-win')
 # 日誌位置
 LOG_FOLDER_PATH = os.path.join(SYSTEM_FOLDER_PATH, 'Logs')
 

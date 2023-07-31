@@ -2,7 +2,7 @@ import { type RouteRecordRaw, createRouter, createWebHashHistory } from "vue-rou
 
 const Layout = () => import("@/layout/index.vue")
 
-/** 常駐路由 */
+/** 常驻路由 */
 export const constantRoutes: RouteRecordRaw[] = [
   {
     path: "/redirect",
@@ -49,7 +49,6 @@ export const constantRoutes: RouteRecordRaw[] = [
         component: () => import("@/views/dashboard/index.vue"),
         name: "Dashboard",
         meta: {
-          keepAlive: true,
           title: "首頁",
           svgIcon: "dashboard",
           affix: true
@@ -58,35 +57,37 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: "/",
+    path: "/setting",
     component: Layout,
     children: [
       {
-        path: "/setting",
+        path: "setting",
         component: () => import("@/views/setting/index.vue"),
         name: "Setting",
         meta: {
           title: "設定",
-          svgIcon: "setting"
-        }
-      }
-    ]
-  },
-  {
-    path: "/",
-    component: Layout,
-    children: [
-      {
-        path: "/unocss",
-        component: () => import("@/views/unocss/index.vue"),
-        name: "UnoCSS",
-        meta: {
-          title: "unocss",
-          svgIcon: "unocss"
+          elIcon: "Tools",
+          affix: true
         }
       }
     ]
   }
+  // {
+  //   path: "/unocss",
+  //   component: Layout,
+  //   redirect: "/unocss/index",
+  //   children: [
+  //     {
+  //       path: "index",
+  //       component: () => import("@/views/unocss/index.vue"),
+  //       name: "UnoCSS",
+  //       meta: {
+  //         title: "unocss",
+  //         svgIcon: "unocss"
+  //       }
+  //     }
+  //   ]
+  // },
   // {
   //   path: "/link",
   //   component: Layout,
@@ -96,7 +97,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   //       component: () => {},
   //       name: "Link",
   //       meta: {
-  //         title: "外鏈",
+  //         title: "外链",
   //         svgIcon: "link"
   //       }
   //     }
@@ -117,8 +118,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   //       component: () => import("@/views/table/element-plus/index.vue"),
   //       name: "ElementPlus",
   //       meta: {
-  //         title: "Element Plus",
-  //         keepAlive: true
+  //         title: "Element Plus"
   //       }
   //     },
   //     {
@@ -126,8 +126,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   //       component: () => import("@/views/table/vxe-table/index.vue"),
   //       name: "VxeTable",
   //       meta: {
-  //         title: "Vxe Table",
-  //         keepAlive: true
+  //         title: "Vxe Table"
   //       }
   //     }
   //   ]
@@ -138,7 +137,7 @@ export const constantRoutes: RouteRecordRaw[] = [
   //   redirect: "/menu/menu1",
   //   name: "Menu",
   //   meta: {
-  //     title: "多級菜單",
+  //     title: "多级菜单",
   //     svgIcon: "menu"
   //   },
   //   children: [
@@ -205,42 +204,13 @@ export const constantRoutes: RouteRecordRaw[] = [
   //       }
   //     }
   //   ]
-  // },
-  // {
-  //   path: "/hook-demo",
-  //   component: Layout,
-  //   redirect: "/hook-demo/use-fetch-select",
-  //   name: "HookDemo",
-  //   meta: {
-  //     title: "hook 示例",
-  //     elIcon: "Menu",
-  //     alwaysShow: true
-  //   },
-  //   children: [
-  //     {
-  //       path: "use-fetch-select",
-  //       component: () => import("@/views/hook-demo/use-fetch-select.vue"),
-  //       name: "UseFetchSelect",
-  //       meta: {
-  //         title: "useFetchSelect"
-  //       }
-  //     },
-  //     {
-  //       path: "use-fullscreen-loading",
-  //       component: () => import("@/views/hook-demo/use-fullscreen-loading.vue"),
-  //       name: "UseFullscreenLoading",
-  //       meta: {
-  //         title: "useFullscreenLoading"
-  //       }
-  //     }
-  //   ]
   // }
 ]
 
 /**
- * 動態路由
- * 用來放置有權限 (Roles 屬性) 的路由
- * 必須帶有 Name 屬性
+ * 动态路由
+ * 用来放置有权限 (Roles 属性) 的路由
+ * 必须带有 Name 属性
  */
 export const asyncRoutes: RouteRecordRaw[] = [
   // {
@@ -249,10 +219,10 @@ export const asyncRoutes: RouteRecordRaw[] = [
   //   redirect: "/permission/page",
   //   name: "Permission",
   //   meta: {
-  //     title: "權限管理",
+  //     title: "权限管理",
   //     svgIcon: "lock",
-  //     roles: ["admin", "editor"], // 可以在根路由中設置角色
-  //     alwaysShow: true // 將始終顯示根菜單
+  //     roles: ["admin", "editor"], // 可以在根路由中设置角色
+  //     alwaysShow: true // 将始终显示根菜单
   //   },
   //   children: [
   //     {
@@ -260,8 +230,8 @@ export const asyncRoutes: RouteRecordRaw[] = [
   //       component: () => import("@/views/permission/page.vue"),
   //       name: "PagePermission",
   //       meta: {
-  //         title: "頁面權限",
-  //         roles: ["admin"] // 或者在子導航中設置角色
+  //         title: "页面权限",
+  //         roles: ["admin"] // 或者在子导航中设置角色
   //       }
   //     },
   //     {
@@ -269,19 +239,19 @@ export const asyncRoutes: RouteRecordRaw[] = [
   //       component: () => import("@/views/permission/directive.vue"),
   //       name: "DirectivePermission",
   //       meta: {
-  //         title: "指令權限" // 如果未設置角色，則表示：該頁面不需要權限，但會繼承根路由的角色
+  //         title: "指令权限" // 如果未设置角色，则表示：该页面不需要权限，但会继承根路由的角色
   //       }
   //     }
   //   ]
   // },
-  {
-    path: "/:pathMatch(.*)*", // Must put the 'ErrorPage' route at the end, 必須將 'ErrorPage' 路由放在最後
-    redirect: "/404",
-    name: "ErrorPage",
-    meta: {
-      hidden: true
-    }
-  }
+  // {
+  //   path: "/:pathMatch(.*)*", // Must put the 'ErrorPage' route at the end, 必须将 'ErrorPage' 路由放在最后
+  //   redirect: "/404",
+  //   name: "ErrorPage",
+  //   meta: {
+  //     hidden: true
+  //   }
+  // }
 ]
 
 const router = createRouter({
@@ -291,7 +261,7 @@ const router = createRouter({
 
 /** 重置路由 */
 export function resetRouter() {
-  // 注意：所有動態路由路由必須帶有 Name 屬性，否則可能會不能完全重置乾淨
+  // 注意：所有动态路由路由必须带有 Name 属性，否则可能会不能完全重置干净
   try {
     router.getRoutes().forEach((route) => {
       const { name, meta } = route
@@ -300,7 +270,7 @@ export function resetRouter() {
       }
     })
   } catch (error) {
-    // 強制刷新瀏覽器也行，只是交互體驗不是很好
+    // 强制刷新浏览器也行，只是交互体验不是很好
     window.location.reload()
   }
 }

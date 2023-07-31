@@ -35,6 +35,7 @@ class Webdriver:
         os.makedirs(self.log_path, exist_ok=True)
         self.logger = get_logger(f'Browser {self.profile_index}',
                                  log_filename=f'{self.log_path}\\client.log',
+                                 is_add_stream_handler=True,
                                  formatter_template=logging.Formatter(
                                      f'%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(funcName)s - "%(pathname)s:%(lineno)d"',
                                      "%Y-%m-%d %H:%M:%S"))
@@ -72,7 +73,7 @@ class Webdriver:
         except:
             return False
 
-    def driver_quit(self,backup_profile=True):
+    def driver_quit(self, backup_profile=True):
         try:
             self.terminate_process(self.driver_pid)
             self.terminate_process(self.browser_pid)
@@ -170,6 +171,8 @@ class Webdriver:
                 backup_zip.extractall(self.profile_dir)
 
             self.logger.info("裝置還原完成")
+        except FileNotFoundError:
+            pass
         except Exception as e:
             self.logger.exception(e)
             self.logger.error("裝置還原失敗")
@@ -193,7 +196,8 @@ class Webdriver:
             # driver = uc.Chrome(options=options, service=services)
             # UC
             driver = uc.Chrome(options=options,
-                               user_data_dir=self.profile_dir
+                               user_data_dir=self.profile_dir,
+                               browser_executable_path=os.path.join(config.BROWSER_BIN_WIN_PATH, "chrome.exe"),
                                )
             self.driver_pid = driver.service.process.pid
             self.browser_pid = driver.browser_pid
@@ -315,7 +319,7 @@ class Webdriver:
 
 if __name__ == '__main__':
     c = Webdriver(1)
-    c.driver= c.create_webdriver()
+    c.driver = c.create_webdriver()
     c.driver.get("https://fb.com/me")
     time.sleep(0.5)
     re_pattern = r'"profilePicLarge":{"uri":"(.+)"},"profilePicMedium"'

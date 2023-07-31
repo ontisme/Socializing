@@ -1,11 +1,8 @@
 <script lang="ts" setup>
 import { computed } from "vue"
 import { useRoute } from "vue-router"
-import { useTagsViewStore } from "@/store/modules/tags-view"
 
 const route = useRoute()
-const tagsViewStore = useTagsViewStore()
-
 const key = computed(() => {
   return route.path
 })
@@ -14,9 +11,11 @@ const key = computed(() => {
 <template>
   <section class="app-main">
     <router-view v-slot="{ Component }">
-      <keep-alive :include="tagsViewStore.cachedViews">
+      <transition name="fade-transform" mode="out-in">
+        <!-- <keep-alive> -->
         <component :is="Component" :key="key" />
-      </keep-alive>
+        <!-- </keep-alive> -->
+      </transition>
     </router-view>
   </section>
 </template>

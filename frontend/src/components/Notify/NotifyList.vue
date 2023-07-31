@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { type PropType } from "vue"
-import { type ListItem } from "./data"
+import { PropType } from "vue"
+import { type IListItem } from "./data"
 
 const props = defineProps({
   list: {
-    type: Object as PropType<ListItem[]>,
+    type: Object as PropType<IListItem[]>,
     required: true
   }
 })

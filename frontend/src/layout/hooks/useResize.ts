@@ -1,7 +1,6 @@
 import { watch, onBeforeMount, onMounted, onBeforeUnmount } from "vue"
 import { useRoute } from "vue-router"
-import { useAppStore } from "@/store/modules/app"
-import { DeviceEnum } from "@/constants/app-key"
+import { useAppStore, DeviceType } from "@/store/modules/app"
 
 /** 参考 Bootstrap 的响应式设计 WIDTH = 992 */
 const WIDTH = 992
@@ -19,7 +18,7 @@ export default () => {
   const _resizeHandler = () => {
     if (!document.hidden) {
       const isMobile = _isMobile()
-      appStore.toggleDevice(isMobile ? DeviceEnum.Mobile : DeviceEnum.Desktop)
+      appStore.toggleDevice(isMobile ? DeviceType.Mobile : DeviceType.Desktop)
       if (isMobile) {
         appStore.closeSidebar(true)
       }
@@ -29,7 +28,7 @@ export default () => {
   watch(
     () => route.name,
     () => {
-      if (appStore.device === DeviceEnum.Mobile && appStore.sidebar.opened) {
+      if (appStore.device === DeviceType.Mobile && appStore.sidebar.opened) {
         appStore.closeSidebar(false)
       }
     }
@@ -41,7 +40,7 @@ export default () => {
 
   onMounted(() => {
     if (_isMobile()) {
-      appStore.toggleDevice(DeviceEnum.Mobile)
+      appStore.toggleDevice(DeviceType.Mobile)
       appStore.closeSidebar(true)
     }
   })

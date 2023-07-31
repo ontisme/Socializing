@@ -1,4 +1,4 @@
-export interface ListItem {
+export interface IListItem {
   avatar?: string
   title: string
   datetime?: string
@@ -7,7 +7,7 @@ export interface ListItem {
   extra?: string
 }
 
-export const notifyData: ListItem[] = [
+export const notifyData: IListItem[] = [
   {
     avatar: "https://gw.alipayobjects.com/zos/rmsportal/OKJXDXrmkNshAMvwtvhu.png",
     title: "V3 Admin Vite 上线啦",
@@ -23,7 +23,7 @@ export const notifyData: ListItem[] = [
   }
 ]
 
-export const messageData: ListItem[] = [
+export const messageData: IListItem[] = [
   {
     avatar: "https://gw.alipayobjects.com/zos/rmsportal/ThXAXghbEsBCCSDihZxY.png",
     title: "来自楚门的世界",
@@ -44,7 +44,7 @@ export const messageData: ListItem[] = [
   }
 ]
 
-export const todoData: ListItem[] = [
+export const todoData: IListItem[] = [
   {
     title: "任务名称",
     description: "这家伙很懒，什么都没留下",

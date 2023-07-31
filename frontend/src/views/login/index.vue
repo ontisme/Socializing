@@ -1,20 +1,20 @@
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue"
+import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/store/modules/user"
 import { User, Lock } from "@element-plus/icons-vue"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
 import { type FormInstance, FormRules } from "element-plus"
-import { type LoginRequestData } from "@/api/login/types/login"
+import { type ILoginData } from "@/api/login"
 
 const router = useRouter()
 const loginFormRef = ref<FormInstance | null>(null)
 
-/** 登入按钮 Loading */
+/** 登录按钮 Loading */
 const loading = ref(false)
-/** 登入表单数据 */
-const loginForm: LoginRequestData = reactive({
-  account: "admin",
+/** 登录表单数据 */
+const loginForm: ILoginData = reactive({
+  username: "admin",
   password: "12345678"
 })
 /** 登入表单校验规则 */
@@ -23,21 +23,20 @@ const loginFormRules: FormRules = {
   password: [
     { required: true, message: "請輸入密碼", trigger: "blur" },
     { min: 8, max: 16, message: "長度在 8 到 16 個字符", trigger: "blur" }
-  ],
-  code: [{ required: true, message: "請輸入驗證碼", trigger: "blur" }]
+  ]
 }
-/** 登入逻辑 */
+/** 登录逻辑 */
 const handleLogin = () => {
   loginFormRef.value?.validate((valid: boolean) => {
     if (valid) {
       loading.value = true
       useUserStore()
         .login({
-          account: loginForm.account,
+          username: loginForm.username,
           password: loginForm.password
         })
         .then(() => {
-          router.push({ path: "/dashboard" })
+          router.push({ path: "/" })
         })
         .catch(() => {
           loginForm.password = ""
@@ -65,10 +64,10 @@ onMounted(() => {
       </div>
       <div class="content">
         <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" @keyup.enter="handleLogin">
-          <el-form-item prop="account">
+          <el-form-item prop="username">
             <el-input
-              v-model.trim="loginForm.account"
-              placeholder="帳號"
+              v-model.trim="loginForm.username"
+              placeholder="用户名"
               type="text"
               tabindex="1"
               :prefix-icon="User"
@@ -78,7 +77,7 @@ onMounted(() => {
           <el-form-item prop="password">
             <el-input
               v-model.trim="loginForm.password"
-              placeholder="密碼"
+              placeholder="密码"
               type="password"
               tabindex="2"
               :prefix-icon="Lock"

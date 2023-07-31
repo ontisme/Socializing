@@ -1,57 +1,49 @@
-import { ref, watchEffect } from "vue"
+import { ref } from "vue"
 import { getActiveThemeName, setActiveThemeName } from "@/utils/cache/localStorage"
 
-const DEFAULT_THEME_NAME = "normal"
-type DefaultThemeName = typeof DEFAULT_THEME_NAME
-
-/** 註冊的主題名稱, 其中 DefaultThemeName 是必填的 */
-export type ThemeName = DefaultThemeName | "dark" | "dark-blue"
-
-interface ThemeList {
+interface IThemeList {
   title: string
   name: ThemeName
 }
 
-/** 主題列表 */
-const themeList: ThemeList[] = [
+/** 注册的主题名称, 其中 normal 是必填的 */
+export type ThemeName = "normal" | "dark" | "dark-blue"
+
+/** 主题列表 */
+const themeList: IThemeList[] = [
   {
-    title: "默認",
-    name: DEFAULT_THEME_NAME
+    title: "默认",
+    name: "normal"
   },
   {
     title: "黑暗",
     name: "dark"
   },
   {
-    title: "深藍",
+    title: "深蓝",
     name: "dark-blue"
   }
 ]
 
-/** 正在應用的主題名稱 */
-const activeThemeName = ref<ThemeName>(getActiveThemeName() || DEFAULT_THEME_NAME)
+/** 正在应用的主题名称 */
+const activeThemeName = ref<ThemeName>(getActiveThemeName() || "normal")
 
-/** 設置主題 */
-const setTheme = (value: ThemeName) => {
-  activeThemeName.value = value
+const initTheme = () => {
+  setHtmlClassName(activeThemeName.value)
 }
 
-/** 在 html 根元素上掛載 class */
-const setHtmlRootClassName = (value: ThemeName) => {
+const setTheme = (value: ThemeName) => {
+  activeThemeName.value = value
+  setHtmlClassName(activeThemeName.value)
+  setActiveThemeName(activeThemeName.value)
+}
+
+/** 在 html 根元素上挂载 class */
+const setHtmlClassName = (value: ThemeName) => {
   document.documentElement.className = value
 }
 
-/** 初始化 */
-const initTheme = () => {
-  // watchEffect 來收集副作用
-  watchEffect(() => {
-    const value = activeThemeName.value
-    setHtmlRootClassName(value)
-    setActiveThemeName(value)
-  })
-}
-
-/** 主題 hook */
+/** 主题 hook */
 export function useTheme() {
   return { themeList, activeThemeName, initTheme, setTheme }
 }

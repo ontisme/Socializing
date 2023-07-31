@@ -1,36 +1,28 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "jsx": "preserve",
-    "target": "esnext",
-    "module": "esnext",
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": "./",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
     "strict": true,
     "types": [
-      "node",
-      "vite/client",
-      // "vite-plugin-svg-icons/client",
+      "vite-svg-loader",
+      "vite-plugin-svg-icons/client",
       /** Element-Plus 的 Volar 插件支持 */
       "element-plus/global"
     ],
+    "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": [
-    "script/**/*.ts",
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "**/*.ts",
-    "unocss.config.ts"
-  ]
-  // "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "unocss.config.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

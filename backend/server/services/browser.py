@@ -35,7 +35,7 @@ async def status(profile_index: int):
     # return condition_1 or condition_2
 
 
-async def add_task(profile_index: int, script: str, params: dict):
+async def add_task(profile_index: int, script: str, params: dict, is_sync_event: bool = False):
     if profile_index not in server_global.webdrivers or server_global.webdrivers[profile_index].driver_is_alive():
         await start_browser(profile_index)
 

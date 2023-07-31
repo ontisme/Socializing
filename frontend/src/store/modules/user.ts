@@ -2,37 +2,30 @@ import { ref } from "vue"
 import store from "@/store"
 import { defineStore } from "pinia"
 import { usePermissionStore } from "./permission"
-import { useTagsViewStore } from "./tags-view"
 import { getToken, removeToken, setToken } from "@/utils/cache/sessionStorage"
 import router, { resetRouter } from "@/router"
-import { loginApi, getUserInfoApi } from "@/api/login"
-import { type LoginRequestData } from "@/api/login/types/login"
+import { type ILoginData, loginApi, getUserInfoApi } from "@/api/login"
 import { type RouteRecordRaw } from "vue-router"
-import asyncRouteSettings from "@/config/async-route"
 
 export const useUserStore = defineStore("user", () => {
   const token = ref<string>(getToken() || "")
   const roles = ref<string[]>([])
-  const account = ref<string>("")
-
-  const permissionStore = usePermissionStore()
-  const tagsViewStore = useTagsViewStore()
+  const username = ref<string>("")
 
   /** 设置角色数组 */
   const setRoles = (value: string[]) => {
     roles.value = value
   }
-  /** 登入 */
-  const login = (loginData: LoginRequestData) => {
+  /** 登录 */
+  const login = (loginData: ILoginData) => {
     return new Promise((resolve, reject) => {
       loginApi({
-        account: loginData.account,
+        username: loginData.username,
         password: loginData.password
       })
-        .then((res) => {
+        .then((res: any) => {
           setToken(res.data.token)
           token.value = res.data.token
-
           resolve(true)
         })
         .catch((error) => {
@@ -44,16 +37,9 @@ export const useUserStore = defineStore("user", () => {
   const getInfo = () => {
     return new Promise((resolve, reject) => {
       getUserInfoApi()
-        .then((res) => {
-          const data = res.data
-          account.value = data.account
-          // 验证返回的 roles 是否是一个非空数组
-          if (data.roles && data.roles.length > 0) {
-            roles.value = data.roles
-          } else {
-            // 塞入一个没有任何作用的默认角色，不然路由守卫逻辑会无限循环
-            roles.value = asyncRouteSettings.defaultRoles
-          }
+        .then((res: any) => {
+          roles.value = res.data.roles
+          username.value = res.data.username
           resolve(res)
         })
         .catch((error) => {
@@ -67,12 +53,12 @@ export const useUserStore = defineStore("user", () => {
     token.value = newToken
     setToken(newToken)
     await getInfo()
+    const permissionStore = usePermissionStore()
     permissionStore.setRoutes(roles.value)
     resetRouter()
     permissionStore.dynamicRoutes.forEach((item: RouteRecordRaw) => {
       router.addRoute(item)
     })
-    _resetTagsView()
   }
   /** 登出 */
   const logout = () => {
@@ -80,7 +66,6 @@ export const useUserStore = defineStore("user", () => {
     token.value = ""
     roles.value = []
     resetRouter()
-    _resetTagsView()
   }
   /** 重置 Token */
   const resetToken = () => {
@@ -88,13 +73,8 @@ export const useUserStore = defineStore("user", () => {
     token.value = ""
     roles.value = []
   }
-  /** 重置 visited views 和 cached views */
-  const _resetTagsView = () => {
-    tagsViewStore.delAllVisitedViews()
-    tagsViewStore.delAllCachedViews()
-  }
 
-  return { token, roles, account, setRoles, login, getInfo, changeRoles, logout, resetToken }
+  return { token, roles, username, setRoles, login, getInfo, changeRoles, logout, resetToken }
 })
 
 /** 在 setup 外使用 */

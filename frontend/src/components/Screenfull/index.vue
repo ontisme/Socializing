@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, watchEffect } from "vue"
+import { ref, onUnmounted } from "vue"
 import { ElMessage } from "element-plus"
 import screenfull from "screenfull"
 
@@ -24,28 +24,37 @@ const props = defineProps({
 const tips = ref<string>(props.openTips)
 const isFullscreen = ref<boolean>(false)
 
-const handleClick = () => {
+const click = async () => {
   const dom = document.querySelector(props.element) || undefined
-  screenfull.isEnabled ? screenfull.toggle(dom) : ElMessage.warning("您的浏览器无法工作")
+  if (!screenfull.isEnabled) {
+    ElMessage.warning("您的浏览器无法工作")
+    return
+  }
+  screenfull.toggle(dom)
+  // const currWin = window.__TAURI__.window.getCurrent()
+  // if (await currWin.isMaximized()) {
+  //   currWin.unmaximize()
+  // } else {
+  //   currWin.maximize()
+  // }
 }
 
-const handleChange = () => {
+const change = () => {
   isFullscreen.value = screenfull.isFullscreen
   tips.value = screenfull.isFullscreen ? props.exitTips : props.openTips
 }
 
-watchEffect((onCleanup) => {
-  // 挂载组件时自动执行
-  screenfull.on("change", handleChange)
-  // 卸载组件时自动执行
-  onCleanup(() => {
-    screenfull.isEnabled && screenfull.off("change", handleChange)
-  })
+screenfull.on("change", change)
+
+onUnmounted(() => {
+  if (screenfull.isEnabled) {
+    screenfull.off("change", change)
+  }
 })
 </script>
 
 <template>
-  <div @click="handleClick">
+  <div @click="click">
     <el-tooltip effect="dark" :content="tips" placement="bottom">
       <svg-icon :name="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" />
     </el-tooltip>

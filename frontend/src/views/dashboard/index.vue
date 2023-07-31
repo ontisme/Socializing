@@ -4,7 +4,6 @@ import { usePagination } from "@/hooks/usePagination"
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus"
 import { useUserStore } from "@/store/modules/user"
 import { deleteProfileApi, getProfileListApi } from "@/api/profile"
-import { ProfileListResponseData } from "@/api/profile/types/profile"
 import { browserAddTaskApi, getBrowserStatusApi } from "@/api/browser"
 import { ProfileItem } from "@/views/dashboard/types/dashboard"
 
@@ -25,7 +24,6 @@ const editForm = ref<any>({
   account: "",
   password: ""
 })
-const multipleTableRef = ref()
 const multipleSelection = ref([])
 const isOpen = ref(false)
 const liveId = ref("")
@@ -33,7 +31,7 @@ const toggleCardCollapse = () => {
   cardCollapse.value = !cardCollapse.value
 }
 //#region 查
-const tableData = ref<ProfileListResponseData[]>([])
+const tableData = ref<[]>([])
 const getTableData = () => {
   loading.value = true
   getProfileListApi()
@@ -46,6 +44,7 @@ const getTableData = () => {
     })
     .finally(() => {
       loading.value = false
+      randomBatchMaxAmount.value = tableData.value.length
     })
 }
 
@@ -230,7 +229,7 @@ const handleBatchUpdateProfile = async () => {
 const handleEditCancel = () => {
   editDrawer.value = false
 }
-const handleSelectionChange = (val) => {
+const handleSelectionChange = (val: never[]) => {
   multipleSelection.value = val
 }
 //#endregion
@@ -242,35 +241,28 @@ watch(multipleSelection, (val) => {
   if (Array.isArray(val) && val.length > 0) {
     randomBatchMaxAmount.value = val.length
   } else {
+    console.log(tableData.value.length)
     randomBatchMaxAmount.value = tableData.value.length
   }
 })
-defineOptions({
-  name: "ElementPlus"
-})
+//#endregion
 </script>
 
 <template>
   <div class="app-container">
     <el-scrollbar min-height="500px">
-      <el-card v-loading="loading" class="!border-none" shadow="never">
+      <el-card v-loading="loading" shadow="always">
         <el-row>
-          <el-col :span="5">
-            <el-button type="primary" @click="getTableData">更新列表</el-button>
-            <el-button type="primary" @click="handleBatchUpdateProfile">批次建檔</el-button>
-          </el-col>
-          <el-col :span="5">
-            <el-input v-model="liveId" label="直播ID" placeholder="直播ID" class="w-64" />
+          <el-col :span="24">
+            <el-space :fill-ratio="30" wrap>
+              <el-button type="primary" @click="getTableData">更新列表</el-button>
+              <el-button type="primary" @click="handleBatchUpdateProfile">批次建檔</el-button>
+              <el-input v-model="liveId" label="直播ID" placeholder="直播ID" class="w-64" />
+            </el-space>
           </el-col>
         </el-row>
         <div class="table-wrapper">
-          <el-table
-            ref="multipleTableRef"
-            :data="tableData"
-            border
-            class="mt-4"
-            @selection-change="handleSelectionChange"
-          >
+          <el-table :data="tableData" border class="mt-4" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="50" align="center" />
             <el-table-column prop="index" label="序列" width="60" align="center" />
             <!--          <el-table-column prop="profile.name" label="配置名稱" width="100" align="center" />-->
@@ -342,9 +334,7 @@ defineOptions({
     <!--  BATCH PLACE -->
     <div>
       <div class="toggle-button" :class="{ open: isOpen, closed: !isOpen }">
-        <button @click="isOpen = !isOpen">
-          {{ isOpen ? "收起" : "展開批次操作區" }}
-        </button>
+        <el-button type="warning" @click="isOpen = !isOpen"> {{ isOpen ? "收起" : "展開批次操作區" }} </el-button>
       </div>
       <div class="content-area" v-show="isOpen">
         <div class="batch-controls-container">
@@ -446,5 +436,10 @@ defineOptions({
 
 .toggle-button.closed {
   bottom: 40px;
+}
+
+.card {
+  border-radius: 100px !important;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1) !important;
 }
 </style>

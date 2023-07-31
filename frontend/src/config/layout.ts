@@ -1,5 +1,5 @@
 /** 布局配置 */
-interface LayoutSettings {
+interface ILayoutSettings {
   /** 是否显示 Settings Panel */
   showSettings: boolean
   /** 是否显示标签栏 */
@@ -20,14 +20,14 @@ interface LayoutSettings {
   showColorWeakness: boolean
 }
 
-const layoutSettings: LayoutSettings = {
+const layoutSettings: ILayoutSettings = {
   showSettings: false,
   showTagsView: false,
-  fixedHeader: true,
+  fixedHeader: false,
   showSidebarLogo: true,
   showNotify: false,
   showThemeSwitch: false,
-  showScreenfull: false,
+  showScreenfull: true,
   showGreyMode: false,
   showColorWeakness: false
 }

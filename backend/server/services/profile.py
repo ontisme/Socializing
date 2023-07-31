@@ -7,7 +7,6 @@ import zipfile
 
 import config
 from server import server_global
-from server.services import browser
 from server.services.browser import add_task, status
 from utils import webdriver_manager
 from utils.logger import server_logger
@@ -19,8 +18,8 @@ async def list_profile():
         for profile in os.listdir(config.PROFILE_CONFIG_FOLDER_PATH):
             if re.match(r"\d+\.json$", profile):
                 profile_index = profile.replace('.json', '')
-                profiles.append(config.load_profile_config(profile_index))
-
+                a = config.load_profile_config(profile_index)
+                profiles.append(a)
     except:
         pass
 
@@ -73,7 +72,8 @@ async def import_profile_from_chrome(profile_data: dict):
         profile_config['index'] = profile_index
         res = await add_profile(profile_config)
         if res:
-            server_logger.info("備份裝置完成")
+            # server_logger.info("備份裝置完成")
+            pass
         else:
             server_logger.error("備份裝置失敗")
 

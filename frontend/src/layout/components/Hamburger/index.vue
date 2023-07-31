@@ -8,13 +8,12 @@ const props = defineProps({
   }
 })
 
-/** Vue 3.3+ defineEmits 语法 */
 const emit = defineEmits<{
-  toggleClick: []
+  (e: "toggle-click"): void
 }>()
 
 const toggleClick = () => {
-  emit("toggleClick")
+  emit("toggle-click")
 }
 </script>
 
